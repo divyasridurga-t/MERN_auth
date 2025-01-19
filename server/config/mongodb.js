@@ -1,10 +1,17 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv';
+dotenv.config();
+
+let URL= process.env.MONGO_URI;
+
 
 const connectDB = async () => {
-    mongoose.connection.on('connected', () => {
-        console.log('connected to database')
-    })
-    await mongoose.connect(`mongodb+srv://sridivya8143:12345678@mernauth.db6uc.mongodb.net/mernAuth`);
+   
+    await mongoose.connect(URL).then(()=>{
+        console.log(`connected to database`)
+    }).catch((err)=>{
+        console.log(`connection error====${err}`);
+    });
 }
 
 export default connectDB;

@@ -7,7 +7,6 @@ import connectDB from './config/mongodb.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 connectDB();
-dotenv.config()
 
 app.use(express.json()); // it parses the incoming json request from req.body for POST & PUT methods - will be undefined without configuration
 app.use(cookieParser()); // it parses the cookies sent in the req.cookies and makes them availabe via req.cookies
