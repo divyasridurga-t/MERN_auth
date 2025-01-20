@@ -1,6 +1,10 @@
-import userModel from "../models/userModel";
+import userModel from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+import transporter from "../config/nodemailer.js";
+dotenv.config();
+
 
 export const register = async (req, res) => {
   let { name, email, password } = req.body;
@@ -12,7 +16,7 @@ export const register = async (req, res) => {
     });
   }
   try {
-    let existingUser = userModel.user.findOne({ email });
+    let existingUser = await userModel.findOne({ email });
     if (existingUser) {
       return res.json({
         status: "failed",
@@ -33,13 +37,28 @@ export const register = async (req, res) => {
     let token = jwt.sign({ id: user._id }, process.env.JWT_SCRET, {
       expiresIn: "7d",
     });
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+    let mailOptions = {
+      from: 'sridivya8143@gmail.com',
+      to: email,
+      subject: 'Welcome to MERN Auth',
+      text: `Welcome ${name}! Your account is been successully created with ${email} account`
+    }
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log(`error===${err}`)
+      }
+    });
+    return res.json({ success: true, message: 'user created successfully' })
   } catch (error) {
+    console.log(error.message);
+
     return res.json({
       status: "failed",
       message: error.message,
@@ -47,4 +66,80 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = () => {};
+
+export const login = async (req, res) => {
+  let { email, password } = req.body;
+  if (!email || !password) {
+    return res.json({ success: 'false', message: 'email and password is missing' })
+  }
+  try {
+    let user = await userModel.findOne({ email });
+    if (!user) {
+      return res.json({ success: false, message: 'Invalid email' })
+    }
+    let passwordCheck = await bcrypt.compare(password, user.password);
+    if (!passwordCheck) {
+      return res.json({ success: false, message: 'Invalid password' })
+    }
+    let token = jwt.sign({ id: user._id }, process.env.JWT_SCRET, {
+      expiresIn: "7d",
+    });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return res.json({ success: true })
+  } catch (error) {
+    return res.json({
+      status: "failed",
+      message: error.message,
+    });
+  }
+}
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    })
+    return res.json({ success: true })
+  } catch (error) {
+    return res.json({
+      status: "failed",
+      message: error.message,
+    });
+  }
+}
+
+
+export const sendVerifyOtp = async (req, res) => {
+  let { userId } = req.body;
+  try {
+    let userDetails = await userModel.findById(userId);
+    if (userDetails.isAccountVerified) {
+      return res.json({ status: 'failed', message: 'user email is already verified' })
+    }
+    let otp = String(Math.floor(1000 + Math.random() * 9000));
+    userDetails.verifyOtp = otp;
+    userDetails.verifyOtpExpiredAt = Date.now() + 24 * 60 * 60 * 1000;
+    let mailOptions = {
+      from: 'sridivya8143@gmail.com',
+      to: email,
+      subject: 'OTP Verification - MERN Auth',
+      text: `OTP for verifying email- ${otp}`
+    }
+    transporter.sendMail(mailOptions)
+    res.json({ status: 'success', message: 'otp sent to your registered email id.' })
+  } catch (error) {
+    return res.json({
+      status: 'failed',
+      message: error.message
+    })
+  }
+}
+
+

@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import connectDB from './config/mongodb.js';
+import router from './routes/authRouter.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +17,8 @@ app.use(cors({ credentials: true }));
 app.get('/', (req, res) => {
     res.send('Heellooooo')
 })
+
+app.use('/auth', router)
 
 
 app.listen(PORT, () => {
