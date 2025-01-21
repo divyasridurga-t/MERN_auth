@@ -3,7 +3,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import connectDB from './config/mongodb.js';
-import router from './routes/authRouter.js';
+import authRouter from './routes/authRouter.js';
+import userRouter from './routes/userRouter.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,7 +19,8 @@ app.get('/', (req, res) => {
     res.send('Heellooooo')
 })
 
-app.use('/auth', router)
+app.use('/auth', authRouter);
+app.use('/user', userRouter)
 
 
 app.listen(PORT, () => {
