@@ -9,10 +9,9 @@ import userRouter from './routes/userRouter.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 connectDB();
-
 app.use(express.json()); // it parses the incoming json request from req.body for POST & PUT methods - will be undefined without configuration
 app.use(cookieParser()); // it parses the cookies sent in the req.cookies and makes them availabe via req.cookies
-app.use(cors({ credentials: true }));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 
 app.get('/', (req, res) => {

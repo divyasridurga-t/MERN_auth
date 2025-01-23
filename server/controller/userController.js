@@ -16,6 +16,8 @@ const getUserDetails = async (req, res) => {
             }
         })
     } catch (error) {
+        console.log(error);
+        
         return res.json({
             status: false,
             message: error.message

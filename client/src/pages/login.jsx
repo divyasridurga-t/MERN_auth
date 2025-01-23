@@ -1,22 +1,77 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Navbar from "../components/Navbar";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../context/userContext";
+import { toast } from "react-toastify";
 
 const Login = () => {
   let navigate = useNavigate();
   let [state, setState] = useState("Sign Up");
-  let [userData, setUserData] = useState({
+  let [userDetails, setUserDetails] = useState({
     name: "",
     email: "",
     password: "",
   });
   function handleChange(e) {
-    setUserData({
-      ...userData,
+    setUserDetails({
+      ...userDetails,
       [e.target.name]: e.target.value,
     });
   }
+
+  let { backenUrl, setUserLoggedIn, getUserdata } = useContext(AppContext);
+  let handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (state == "Sign Up") {
+        let apiRequest = await fetch(backenUrl + "/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            name: userDetails.name,
+            email: userDetails.email,
+            password: userDetails.password,
+          }),
+        });
+        let data = await apiRequest.json();
+        if (data.success) {
+          getUserdata();
+          setUserLoggedIn(true);
+          navigate("/");
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        let apiRequest = await fetch(backenUrl + "/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials:"include",
+          body: JSON.stringify({
+            email: userDetails.email,
+            password: userDetails.password,
+          }),
+        });
+        let data = await apiRequest.json();
+
+        
+        if (data.success) {
+          getUserdata();
+          setUserLoggedIn(true);
+          navigate("/");
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      console.log("error===>>", error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
@@ -26,7 +81,7 @@ const Login = () => {
         <div className="mb-3">{`${
           state === "Sign Up" ? "Create your account" : "Login to your account"
         }`}</div>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             {state == "Sign Up" && (
               <div className="flex bg-slate-500 p-3 rounded-full mb-4">
@@ -37,7 +92,7 @@ const Login = () => {
                   placeholder="Name"
                   required
                   name="name"
-                  value={userData.name}
+                  value={userDetails.name}
                   onChange={handleChange}
                 />
               </div>
@@ -50,7 +105,7 @@ const Login = () => {
                 placeholder="Email"
                 required
                 name="email"
-                value={userData.email}
+                value={userDetails.email}
                 onChange={handleChange}
               />
             </div>
@@ -62,13 +117,16 @@ const Login = () => {
                 placeholder="Password"
                 required
                 name="password"
-                value={userData.password}
+                value={userDetails.password}
                 onChange={handleChange}
               />
             </div>
           </div>
           {state != "Sign Up" && (
-            <p onClick={()=>navigate('/reset-password')} className="mb-3 text-xs text-indigo-900 cursor-pointer">
+            <p
+              onClick={() => navigate("/reset-password")}
+              className="mb-3 text-xs text-indigo-900 cursor-pointer"
+            >
               Forgot your password ?
             </p>
           )}
