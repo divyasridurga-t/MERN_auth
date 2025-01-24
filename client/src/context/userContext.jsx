@@ -10,20 +10,17 @@ export const AppContextProvider = ({ children }) => {
   let getUserdata = async () => {
     try {
       let data = await fetch(backenUrl + "/user/data", {
-        method:"GET",
+        method: "GET",
         credentials: "include",
       });
       let res = await data.json();
-      console.log(res,'??????????');
-      
+
       if (res.success) {
-        console.log('1111');
-        
+
         setUserData(res.userInfo);
+        localStorage.setItem("data", JSON.stringify(res.userInfo));
       } else {
         toast.error(res.message);
-        console.log('2222');
-        
       }
     } catch (error) {
       toast.error(error.message);

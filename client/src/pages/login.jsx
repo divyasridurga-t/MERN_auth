@@ -20,7 +20,8 @@ const Login = () => {
     });
   }
 
-  let { backenUrl, setUserLoggedIn, getUserdata } = useContext(AppContext);
+  let { backenUrl, setUserLoggedIn, getUserdata, isUserLoggedin } =
+    useContext(AppContext);
   let handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -41,6 +42,7 @@ const Login = () => {
         if (data.success) {
           getUserdata();
           setUserLoggedIn(true);
+          localStorage.setItem("isUserLoggedIn", true);
           navigate("/");
         } else {
           toast.error(data.message);
@@ -51,7 +53,7 @@ const Login = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials:"include",
+          credentials: "include",
           body: JSON.stringify({
             email: userDetails.email,
             password: userDetails.password,
@@ -59,10 +61,10 @@ const Login = () => {
         });
         let data = await apiRequest.json();
 
-        
         if (data.success) {
           getUserdata();
           setUserLoggedIn(true);
+          localStorage.setItem("isUserLoggedIn", true);
           navigate("/");
         } else {
           toast.error(data.message);
@@ -75,7 +77,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
-      <Navbar page={"login"} />
+      <Navbar page={true} />
       <div className="flex flex-col items-center bg-slate-400 px-7 py-14 rounded-xl">
         <h1 className="text-2xl font-semibold mb-2">{state}</h1>
         <div className="mb-3">{`${

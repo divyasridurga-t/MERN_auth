@@ -1,12 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-const EmailVerify=()=>{
-    return (
-        <div>
-            email verify
-        </div>
-    )
-}
-
+const EmailVerify = () => {
+  useEffect(() => {
+    console.log("11111111111111111111");
+  }, []);
+  return <div>email verify</div>;
+};
 
 export default EmailVerify;

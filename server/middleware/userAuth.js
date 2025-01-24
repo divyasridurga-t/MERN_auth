@@ -4,7 +4,6 @@ dotenv.config()
 
 const userMidAuth = (req, res, next) => {
     let { token } = req.cookies;
-    console.log(token,'??/');
     
     if (!token) {
         return res.json({
