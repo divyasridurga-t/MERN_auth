@@ -4,6 +4,7 @@ import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/userContext";
 import { toast } from "react-toastify";
+import fnNavigate from "../customHooks/useNavigateHook";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -44,6 +45,7 @@ const Login = () => {
           setUserLoggedIn(true);
           localStorage.setItem("isUserLoggedIn", true);
           navigate("/");
+          toast.success("registration success")
         } else {
           toast.error(data.message);
         }
@@ -65,7 +67,8 @@ const Login = () => {
           getUserdata();
           setUserLoggedIn(true);
           localStorage.setItem("isUserLoggedIn", true);
-          navigate("/");
+          navigate('/');
+          toast.success("login success")
         } else {
           toast.error(data.message);
         }

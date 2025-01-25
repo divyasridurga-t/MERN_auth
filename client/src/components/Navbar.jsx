@@ -11,7 +11,6 @@ const Navbar = ({ page }) => {
   let { backenUrl, isUserLoggedin, setUserLoggedIn, userData } =
     useContext(AppContext);
   let data = JSON.parse(localStorage.getItem("data"));
-  console.log(data, "????");
   function handleBtnClick() {
     setMenuOpen(!menuOpen);
   }
@@ -26,7 +25,7 @@ const Navbar = ({ page }) => {
       toast.success("Logout successfull !!");
       localStorage.removeItem("data");
       localStorage.setItem("isUserLoggedIn", false);
-      navigate("/");
+      window.location.href = "/";
     }
   };
 
