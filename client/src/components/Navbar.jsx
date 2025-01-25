@@ -8,7 +8,10 @@ const Navbar = ({ page }) => {
   let navigate = useNavigate();
   let userLoggedIn = JSON.parse(localStorage.getItem("isUserLoggedIn"));
   let [menuOpen, setMenuOpen] = useState(false);
-  let { backenUrl, isUserLoggedin, setUserLoggedIn } = useContext(AppContext);
+  let { backenUrl, isUserLoggedin, setUserLoggedIn, userData } =
+    useContext(AppContext);
+  let data = JSON.parse(localStorage.getItem("data"));
+  console.log(data, "????");
   function handleBtnClick() {
     setMenuOpen(!menuOpen);
   }
@@ -23,7 +26,7 @@ const Navbar = ({ page }) => {
       toast.success("Logout successfull !!");
       localStorage.removeItem("data");
       localStorage.setItem("isUserLoggedIn", false);
-      window.location.reload();
+      navigate("/");
     }
   };
 
@@ -51,12 +54,16 @@ const Navbar = ({ page }) => {
                 Logout
               </div>
 
-              <div
-                onClick={() => navigate("/email-verify")}
-                className="bg-slate-400 px-4 py-2 cursor-pointer"
-              >
-                Verify email
-              </div>
+              {data.isAccountVerified ? (
+                ""
+              ) : (
+                <div
+                  onClick={() => navigate("/email-verify")}
+                  className="bg-slate-400 px-4 py-2 cursor-pointer"
+                >
+                  Verify email
+                </div>
+              )}
             </div>
           ) : (
             ""

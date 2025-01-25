@@ -121,7 +121,7 @@ export const sendVerifyOtp = async (req, res) => {
   try {
     let userDetails = await userModel.findById(userId);
     if (userDetails.isAccountVerified) {
-      return res.json({ status: 'failed', message: 'user email is already verified' })
+      return res.json({ status: false, message: 'user email is already verified' })
     }
     let otp = String(Math.floor(10000 + Math.random() * 90000));
     userDetails.verifyOtp = otp;
@@ -134,10 +134,8 @@ export const sendVerifyOtp = async (req, res) => {
       text: `OTP for verifying email- ${otp}`
     }
     transporter.sendMail(mailOptions)
-    res.json({ status: 'success', message: 'otp sent to your registered email id.' })
+    res.json({ status: true, message: 'otp sent to your registered email id.' })
   } catch (error) {
-    console.log(error, '????');
-
     return res.json({
       status: 'failed',
       message: error.message

@@ -71,7 +71,7 @@ const Login = () => {
         }
       }
     } catch (error) {
-      console.log("error===>>", error);
+      console.log("error===>>", error.message);
     }
   };
 
