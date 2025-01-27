@@ -166,4 +166,12 @@ export const UploadImage = async (req, res) => {
         })
     }
 }
+// post api for cart
 
+// get api for cart
+
+// create swagger file for all the end points
+//  PUT , PATCH , DELETE method for all the routes
+
+// wishlist post 
+//  wishlist get
