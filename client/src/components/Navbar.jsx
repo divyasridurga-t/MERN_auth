@@ -1,16 +1,19 @@
 import { useContext, useState } from "react";
 import { assets } from "../assets/assets";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import { AppContext } from "../context/userContext";
 import { toast } from "react-toastify";
 
 const Navbar = ({ page }) => {
   let navigate = useNavigate();
+  let { pathname = "" } = useLocation();
+
   let userLoggedIn = JSON.parse(localStorage.getItem("isUserLoggedIn"));
   let [menuOpen, setMenuOpen] = useState(false);
   let { backenUrl, isUserLoggedin, setUserLoggedIn, userData } =
     useContext(AppContext);
   let data = JSON.parse(localStorage.getItem("data"));
+
   function handleBtnClick() {
     setMenuOpen(!menuOpen);
   }
@@ -37,12 +40,9 @@ const Navbar = ({ page }) => {
       {userLoggedIn ? (
         <div>
           <button onClick={handleBtnClick}>
-            <img
-              width="32"
-              height="32"
-              src="https://img.icons8.com/windows/32/menu-2.png"
-              alt="menu-2"
-            />
+            <div className="w-10 h-10 bg-slate-600 rounded-full flex justify-center items-center text-xl text-white">
+              {data ? data.name[0] : ""}
+            </div>
           </button>
           {menuOpen ? (
             <div className="absolute right-0 shadow-lg top-20">
@@ -70,15 +70,19 @@ const Navbar = ({ page }) => {
         </div>
       ) : (
         <>
-          <button
-            onClick={() => {
-              navigate("/login");
-            }}
-            className="px-4 py-1 bg-gradient-to-r from-slate-200 to-slate-300 hover:from-blue-100 hover:to-blue-200 rounded-lg shadow-lg h-10 flex items-center"
-          >
-            Login
-            <img className="pl-2" src={assets.arrow_icon} />
-          </button>
+          {pathname == "/login" ? (
+            ""
+          ) : (
+            <button
+              onClick={() => {
+                navigate("/login");
+              }}
+              className="px-4 py-1 bg-gradient-to-r from-slate-200 to-slate-300 hover:from-blue-100 hover:to-blue-200 rounded-lg shadow-lg h-10 flex items-center"
+            >
+              Login
+              <img className="pl-2" src={assets.arrow_icon} />
+            </button>
+          )}
         </>
       )}
     </div>

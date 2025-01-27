@@ -64,6 +64,7 @@ const Login = () => {
         let data = await apiRequest.json();
 
         if (data.success) {
+
           getUserdata();
           setUserLoggedIn(true);
           localStorage.setItem("isUserLoggedIn", true);
