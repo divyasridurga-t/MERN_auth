@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import Navbar from "../components/Navbar";
 import { AppContext } from "../context/userContext";
 import LandingPageComp from "../components/LandingPage";
+import ComponentPage from "../components/componentPage";
 
 const Home = () => {
   let userLoggedIn = JSON.parse(localStorage.getItem("isUserLoggedIn"));
@@ -12,7 +13,7 @@ const Home = () => {
 
       {userLoggedIn ? (
         <>
-          <div>hello</div>
+          <ComponentPage />
         </>
       ) : (
         <LandingPageComp />

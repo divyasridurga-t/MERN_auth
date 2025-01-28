@@ -5,7 +5,8 @@ import dotenv from 'dotenv';
 import connectDB from './config/mongodb.js';
 import authRouter from './routes/authRouter.js';
 import userRouter from './routes/userRouter.js';
-import productRoute from './routes/productsRoutes.js'
+import productRoute from './routes/productsRoutes.js';
+import cartRoutes from './routes/cartRoutes.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use("/products", productRoute);
+app.use("/cart", cartRoutes);
 
 
 

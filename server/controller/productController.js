@@ -4,6 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv'
+import mongoose from "mongoose";
 dotenv.config();
 
 cloudinary.config({
@@ -15,8 +16,8 @@ cloudinary.config({
 
 // post all products
 export const postProducts = async (req, res) => {
-    let { title, description, price, category, image } = req.body;
-    if (!title || !description || !price || !category || !image) {
+    let { title, description, price, category, image, searchCategory, sizes, colors, offers, productDetail } = req.body;
+    if (!title || !description || !price || !category || !image || !searchCategory || !sizes || !colors || !offers || !productDetail) {
         return res.status(400).json({
             status: false,
             message: "Missing details"
@@ -30,7 +31,8 @@ export const postProducts = async (req, res) => {
             price,
             category,
             searchCategory: searchByCategory,
-            image
+            image,
+            sizes, colors, offers, productDetail
         })
         await products.save();
         return res.status(200).json({ status: true, message: "data added successfully" })
@@ -80,6 +82,61 @@ export const getProductsById = async (req, res) => {
 
     } catch (error) {
         console.log("error in getting product ===>>>", error);
+        return res.status(400).json({
+            status: false,
+            message: error.message
+        })
+    }
+}
+
+// update product details with ID
+export const updateProduct = async (req, res) => {
+    let { id } = req.params;
+    let updates = req.body;
+    try {
+        let newId = new mongoose.Types.ObjectId(id);
+        let data = await productModel.findByIdAndUpdate(newId,
+            { $set: updates }, // updates the specific fields only
+            { new: true, runValidators: true }
+        )
+        if (data) {
+            return res.status(200).json({
+                status: true,
+                data: data
+            })
+        } else {
+            return res.status(404).json({
+                status: false,
+                message: `product with id - ${id} not found`
+            })
+        }
+    } catch (error) {
+        console.log('error in updating products', error.message);
+        return res.status(400).json({
+            status: false,
+            message: error.message
+        })
+    }
+}
+
+// delete product details with ID
+export const deletProductWithId = async (req, res) => {
+    let { id } = req.params;
+    try {
+        let newId = new mongoose.Types.ObjectId(id)
+        let data = await productModel.findByIdAndDelete(newId)
+        if (data) {
+            return res.status(200).json({
+                status: true,
+                data: `product with id - ${id} deleted successfully`
+            })
+        } else {
+            return res.status(404).json({
+                status: false,
+                message: 'id not found'
+            })
+        }
+    } catch (error) {
         return res.status(400).json({
             status: false,
             message: error.message
