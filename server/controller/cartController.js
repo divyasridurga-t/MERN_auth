@@ -75,8 +75,6 @@ export const getCartProducts = async (req, res) => {
         }
         let cartData = await Promise.all(
             data.items.map(async (items) => {
-                console.log(items);
-                
                 let itemData = await productModel.findById(items.productId)
                 return {
                     title: itemData.title,
