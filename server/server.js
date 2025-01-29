@@ -6,7 +6,8 @@ import connectDB from './config/mongodb.js';
 import authRouter from './routes/authRouter.js';
 import userRouter from './routes/userRouter.js';
 import productRoute from './routes/productsRoutes.js';
-import cartRoutes from './routes/cartRoutes.js'
+import cartRoutes from './routes/cartRoutes.js';
+import wishListRoute from './routes/wishListRoute.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use("/products", productRoute);
 app.use("/cart", cartRoutes);
+app.use("/wishlist", wishListRoute)
 
 
 
