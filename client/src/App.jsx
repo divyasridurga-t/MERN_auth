@@ -4,18 +4,19 @@ import Home from "./pages/homePage";
 import Login from "./pages/login";
 import EmailVerify from "./pages/emailVerify";
 import ResetPassword from "./pages/resetPassword";
-import { ToastContainer} from 'react-toastify'
+import { ToastContainer } from "react-toastify";
+import Admin from "./pages/admin";
 
 function App() {
   return (
     <>
-    <ToastContainer/>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/email-verify" element={<EmailVerify />}></Route>
         <Route path="/reset-password" element={<ResetPassword />}></Route>
-        <Route path="/admin" element={''} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </>
   );

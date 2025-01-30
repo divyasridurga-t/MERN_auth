@@ -35,15 +35,15 @@ let productSchema = new mongoose.Schema({
     },
     sizes: {
         type: Array,
-        required: true
+        required: false
     },
     colors: {
         type: Array,
-        required: true
+        required: false
     },
     offers: {
         type: Array,
-        reuired: true
+        reuired: false
     },
     productDetail: {
         type: String,
