@@ -14,12 +14,12 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 app.use(express.json()); // it parses the incoming json request from req.body for POST & PUT methods - will be undefined without configuration
 app.use(cookieParser()); // it parses the cookies sent in the req.cookies and makes them availabe via req.cookies
-// app.use(cors({ origin: 'http://localhost:5174', credentials: true }));
-// app.use(cors({
-//   origin: 'http://localhost:5174', // Frontend domain
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   allowedHeaders: ['Content-Type'],
-// }));
+app.use(cors({
+  origin: 'http://localhost:3001',
+  credentials: true, // Allow cookies and credentials
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+}));
 
 
 app.get('/', (req, res) => {

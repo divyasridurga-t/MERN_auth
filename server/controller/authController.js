@@ -7,63 +7,78 @@ dotenv.config();
 
 
 export const register = async (req, res) => {
-  let { name, email, password } = req.body;
+  const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({
       status: "failed",
-      message: "field missing",
+      message: "All fields are required.",
     });
   }
+
   try {
-    let existingUser = await userModel.findOne({ email });
+    // Check if user already exists
+    const existingUser = await userModel.findOne({ email });
+    console.log('Existing user:', existingUser); // Debug
+
     if (existingUser) {
-      return res.status(404).json({
+      return res.status(409).json({  // ✅ 409 = Conflict
         status: "failed",
-        message: "user already exists!",
+        message: "User already exists!",
       });
     }
-    // bcrypt password
-    let hashedPassword = await bcrypt.hash(password, 10);
-    // create user in DB
-    let user = new userModel({
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = new userModel({
       name,
       email,
       password: hashedPassword,
     });
+
     await user.save();
 
-    // genrate token and send them in cookies
-    let token = jwt.sign({ id: user._id }, process.env.JWT_SCRET, {
+    // Generate JWT
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SCRET, {
       expiresIn: "7d",
     });
 
+    // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    let mailOptions = {
+
+    // Send welcome email
+    const mailOptions = {
       from: 'sridivya8143@gmail.com',
       to: email,
       subject: 'Welcome to MERN Auth',
-      text: `Welcome ${name}! Your account is been successully created with ${email} account`
-    }
+      text: `Welcome ${name}! Your account has been successfully created using ${email}.`,
+    };
+
     transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log(`error===${err}`)
-      }
+      if (err) console.log('Email error:', err);
     });
-    return res.status(200).json({ success: true, message: 'user created successfully' })
+
+    return res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+    });
+
   } catch (error) {
-    console.log(error.message);
-    return res.status(400).json({
+    console.log('Registration Error:', error.message);
+    return res.status(500).json({
       status: "failed",
-      message: error.message,
+      message: error.message || 'Something went wrong',
     });
   }
 };
+
 
 
 export const login = async (req, res) => {
